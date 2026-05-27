@@ -2,7 +2,7 @@
   "name": "ag-photography",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://agphotographyin-dot.github.io/hcmtv",
+  "homepage": "https://agphotographyin-dot.github.io/hcmtv/public",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
