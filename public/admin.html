@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin - HCM TV</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap');
+    :root {
+      --bg:#080f0c;
+      --panel:#0e1c16;
+      --green:#64b48c;
+      --green2:#2d4a3e;
+      --gold:#c9a84c;
+      --gold2:#e8c97a;
+      --text:#fff;
+      --muted:rgba(255,255,255,.42);
+      --line:rgba(100,180,140,.16);
+      --danger:#e07070;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(100,180,140,.16), transparent 34rem),
+        linear-gradient(135deg, #08100d 0%, #050806 100%);
+      color:var(--text);
+      font-family:Inter, sans-serif;
+    }
+    button, input, textarea, select { font:inherit; }
+    .wrap { width:min(980px, calc(100% - 28px)); margin:0 auto; padding:28px 0 44px; }
+    .top {
+      display:flex; align-items:center; justify-content:space-between; gap:18px;
+      padding:16px 0 24px;
+    }
+    .brand { display:flex; align-items:center; gap:14px; }
+    .brand img { width:44px; height:44px; object-fit:cover; border-radius:10px; border:1px solid var(--line); }
+    h1 {
+      margin:0;
+      font-family:"Cormorant Garamond", serif;
+      font-size:34px;
+      font-weight:400;
+      letter-spacing:.05em;
+    }
+    .sub { color:var(--muted); font-size:11px; letter-spacing:.16em; text-transform:uppercase; margin-top:2px; }
+    .panel {
+      background:rgba(14,28,22,.92);
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow:0 24px 64px rgba(0,0,0,.45);
+      overflow:hidden;
+    }
+    .login { max-width:430px; margin:9vh auto 0; padding:28px; }
+    .content { padding:24px; }
+    .tabs { display:flex; gap:0; border-bottom:1px solid rgba(100,180,140,.1); margin:-4px 0 22px; }
+    .tab {
+      padding:11px 18px;
+      background:none;
+      border:0;
+      border-bottom:2px solid transparent;
+      color:rgba(255,255,255,.36);
+      cursor:pointer;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+      margin-bottom:-1px;
+    }
+    .tab.on { color:rgba(100,180,140,.94); border-bottom-color:rgba(100,180,140,.72); }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .field { margin-bottom:14px; }
+    label {
+      display:block;
+      color:rgba(100,180,140,.82);
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:.2em;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    input, textarea, select {
+      width:100%;
+      border:1px solid rgba(100,180,140,.14);
+      background:rgba(255,255,255,.045);
+      color:#fff;
+      border-radius:8px;
+      padding:10px 13px;
+      outline:none;
+      font-size:12px;
+    }
+    input:focus, textarea:focus, select:focus { border-color:rgba(100,180,140,.48); }
+    textarea { min-height:76px; resize:vertical; }
+    select option { background:#101a16; }
+    .check { display:flex; align-items:center; gap:9px; color:rgba(255,255,255,.58); font-size:12px; cursor:pointer; }
+    .check input { width:14px; height:14px; accent-color:var(--green); }
+    .btn {
+      border:1px solid rgba(100,180,140,.35);
+      background:rgba(100,180,140,.18);
+      color:#fff;
+      border-radius:100px;
+      padding:11px 18px;
+      cursor:pointer;
+      font-size:10px;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      transition:.2s;
+    }
+    .btn:hover { background:rgba(100,180,140,.3); }
+    .btn.full { width:100%; margin-top:4px; padding:14px; }
+    .btn.gold { background:rgba(201,168,76,.12); border-color:rgba(201,168,76,.32); color:var(--gold2); width:100%; margin-top:9px; }
+    .btn.gold:hover { background:rgba(201,168,76,.22); }
+    .btn.ghost { background:transparent; color:rgba(255,255,255,.44); border-color:rgba(255,255,255,.12); }
+    .btn.danger { background:rgba(224,112,112,.08); border-color:rgba(224,112,112,.25); color:var(--danger); }
+    .msg {
+      display:none;
+      background:rgba(45,74,62,.3);
+      border:1px solid rgba(100,180,140,.3);
+      border-radius:10px;
+      color:rgba(100,180,140,.95);
+      font-size:12px;
+      padding:11px 14px;
+      margin-bottom:14px;
+      letter-spacing:.04em;
+    }
+    .msg.show { display:block; }
+    .episode {
+      position:relative;
+      background:rgba(45,74,62,.2);
+      border:1px solid rgba(100,180,140,.1);
+      border-radius:12px;
+      padding:14px;
+      margin-bottom:10px;
+    }
+    .episode-title { color:rgba(255,255,255,.32); font-size:9px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin-bottom:10px; }
+    .remove-episode {
+      position:absolute; right:10px; top:9px;
+      background:none; border:0; color:rgba(255,255,255,.32);
+      cursor:pointer; font-size:14px;
+    }
+    .remove-episode:hover { color:var(--danger); }
+    .list { display:flex; flex-direction:column; gap:10px; }
+    .item {
+      display:flex; align-items:center; gap:13px;
+      border:1px solid rgba(100,180,140,.12);
+      background:rgba(45,74,62,.2);
+      border-radius:12px;
+      padding:12px;
+    }
+    .item img { width:82px; height:52px; object-fit:cover; border-radius:8px; flex:0 0 auto; }
+    .item-info { min-width:0; flex:1; }
+    .item-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .item-meta { font-size:10px; color:rgba(255,255,255,.34); margin-top:4px; letter-spacing:.04em; }
+    .item-pin { color:rgba(100,180,140,.82); font-size:9px; font-weight:800; letter-spacing:.1em; margin-top:4px; }
+    .actions { display:flex; gap:7px; flex:0 0 auto; }
+    .editing {
+      display:none;
+      color:rgba(100,180,140,.88);
+      font-size:11px;
+      letter-spacing:.06em;
+      margin-bottom:14px;
+    }
+    .editing.show { display:block; }
+    .empty { color:rgba(255,255,255,.3); font-size:12px; text-align:center; padding:28px 0; }
+    .hide { display:none; }
+    @media(max-width:720px) {
+      .grid2 { grid-template-columns:1fr; }
+      .item { align-items:flex-start; }
+      .actions { flex-direction:column; }
+      .top { align-items:flex-start; flex-direction:column; }
+      h1 { font-size:29px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section id="loginPanel" class="panel login">
+      <div class="brand" style="margin-bottom:20px">
+        <img src="/logo-green.png" alt="HCM" />
+        <div>
+          <h1>Admin - HCM TV</h1>
+          <div class="sub">Backdoor database control</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="password">Admin Password</label>
+        <input id="password" type="password" placeholder="Enter password" autofocus />
+      </div>
+      <button id="loginBtn" class="btn full">Unlock Admin</button>
+      <div id="loginMsg" class="msg" style="margin-top:14px"></div>
+    </section>
+
+    <section id="adminPanel" class="hide">
+      <div class="top">
+        <div class="brand">
+          <img src="/logo-green.png" alt="HCM" />
+          <div>
+            <h1>Admin - HCM TV</h1>
+            <div class="sub">Single file database: data/events.json</div>
+          </div>
+        </div>
+        <button id="logoutBtn" class="btn ghost">Lock</button>
+      </div>
+
+      <div class="panel">
+        <div class="content">
+          <div class="tabs">
+            <button id="addTab" class="tab on">+ Add Event</button>
+            <button id="manageTab" class="tab">Manage (0)</button>
+          </div>
+          <div id="msg" class="msg"></div>
+
+          <section id="formView">
+            <div id="editing" class="editing"></div>
+            <div class="field">
+              <label for="title">Event / Couple Title *</label>
+              <input id="title" placeholder="Priya & Arjun - Udaipur" />
+            </div>
+            <div class="field">
+              <label for="thumb">Thumbnail URL</label>
+              <input id="thumb" placeholder="https://..." />
+            </div>
+            <div class="field">
+              <label for="desc">Description</label>
+              <textarea id="desc" placeholder="Describe this event..."></textarea>
+            </div>
+            <div class="grid2">
+              <div class="field">
+                <label for="category">Category</label>
+                <select id="category">
+                  <option>Destination</option>
+                  <option>Celebrity</option>
+                  <option>Love Story</option>
+                  <option>Wedding Film</option>
+                  <option>Short Film</option>
+                  <option>InstaFilm</option>
+                  <option>Pre Wed</option>
+                  <option>Fashion</option>
+                  <option>BTS</option>
+                  <option>Podcast</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="year">Year</label>
+                <input id="year" placeholder="2024" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="location">Location / Venue</label>
+              <input id="location" placeholder="Udaipur, India" />
+            </div>
+            <div class="field">
+              <label for="pin">Event PIN - Optional (6 digits)</label>
+              <input id="pin" inputmode="numeric" maxlength="6" placeholder="Leave empty = public" />
+            </div>
+            <div class="field">
+              <label class="check"><input id="featured" type="checkbox" /> Mark as Featured (hero banner)</label>
+            </div>
+
+            <div class="field">
+              <label>Films / Episodes</label>
+              <div id="episodes"></div>
+              <button id="addEpisodeBtn" class="btn ghost full" type="button">+ Add Another Film</button>
+            </div>
+
+            <button id="submitBtn" class="btn full">Add to HCM TV</button>
+          </section>
+
+          <section id="manageView" class="hide">
+            <div id="list" class="list"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const ADMIN_PW = "ag2024";
+    const API_EVENTS = "/api/events";
+    const API_YOUTUBE = "/api/youtube";
+    const fallbackThumb = "https://images.unsplash.com/photo-1519741347686-c1e0aadf4611?w=200&q=60";
+    const emptyForm = () => ({
+      title: "",
+      thumb: "",
+      desc: "",
+      category: "Destination",
+      year: "2024",
+      location: "",
+      featured: false,
+      pin: "",
+      episodes: [{ id: "e" + Date.now(), title: "", youtubeId: "", duration: "" }]
+    });
+
+    let events = [];
+    let form = emptyForm();
+    let editingId = null;
+    let activeTab = "add";
+
+    const $ = id => document.getElementById(id);
+
+    function showMessage(text, target = $("msg")) {
+      target.textContent = text;
+      target.classList.add("show");
+      setTimeout(() => target.classList.remove("show"), 2600);
+    }
+
+    async function api(url, options = {}) {
+      const res = await fetch(url, {
+        headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+        ...options
+      });
+      let data = null;
+      try { data = await res.json(); } catch (_) {}
+      if (!res.ok) throw new Error(data?.error || "Database request failed.");
+      return data;
+    }
+
+    function syncFormFromInputs() {
+      form = {
+        ...form,
+        title: $("title").value,
+        thumb: $("thumb").value,
+        desc: $("desc").value,
+        category: $("category").value,
+        year: $("year").value,
+        location: $("location").value,
+        pin: $("pin").value.replace(/\D/g, "").slice(0, 6),
+        featured: $("featured").checked,
+        episodes: form.episodes.map((ep, index) => ({
+          ...ep,
+          title: $("epTitle" + index)?.value || "",
+          youtubeId: $("epYoutube" + index)?.value || "",
+          duration: $("epDuration" + index)?.value || ""
+        }))
+      };
+      $("pin").value = form.pin;
+    }
+
+    function renderForm() {
+      $("title").value = form.title;
+      $("thumb").value = form.thumb;
+      $("desc").value = form.desc;
+      $("category").value = form.category;
+      $("year").value = form.year;
+      $("location").value = form.location;
+      $("pin").value = form.pin;
+      $("featured").checked = form.featured;
+      $("submitBtn").textContent = editingId ? "Save Changes" : "Add to HCM TV";
+      $("editing").classList.toggle("show", Boolean(editingId));
+      $("editing").innerHTML = editingId
+        ? `Editing: <strong style="color:#fff">${form.title || "Untitled event"}</strong> <button class="btn ghost" style="padding:5px 10px;margin-left:10px" onclick="cancelEdit()">Cancel</button>`
+        : "";
+
+      $("episodes").innerHTML = form.episodes.map((ep, index) => `
+        <div class="episode">
+          <div class="episode-title">Film ${index + 1}</div>
+          ${form.episodes.length > 1 ? `<button class="remove-episode" type="button" onclick="removeEpisode(${index})">x</button>` : ""}
+          <div class="field">
+            <label for="epTitle${index}" style="color:rgba(255,255,255,.36)">Film Title</label>
+            <input id="epTitle${index}" value="${escapeHtml(ep.title)}" placeholder="The Ceremony" oninput="syncFormFromInputs()" />
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label for="epYoutube${index}" style="color:rgba(255,255,255,.36)">YouTube Link *</label>
+              <input id="epYoutube${index}" value="${escapeHtml(ep.youtubeId)}" placeholder="YouTube URL or ID" oninput="syncFormFromInputs()" />
+            </div>
+            <div class="field">
+              <label for="epDuration${index}" style="color:rgba(255,255,255,.36)">Duration</label>
+              <input id="epDuration${index}" value="${escapeHtml(ep.duration)}" placeholder="12 min" oninput="syncFormFromInputs()" />
+            </div>
+          </div>
+          <button class="btn gold" type="button" onclick="fetchYoutube(${index})">Fetch Video Title, Duration & Thumbnail</button>
+        </div>
+      `).join("");
+    }
+
+    function renderList() {
+      $("manageTab").textContent = `Manage (${events.length})`;
+      if (!events.length) {
+        $("list").innerHTML = `<div class="empty">No events yet.</div>`;
+        return;
+      }
+      $("list").innerHTML = events.map(ev => `
+        <div class="item">
+          <img src="${escapeAttr(ev.thumb || fallbackThumb)}" alt="${escapeAttr(ev.title)}" />
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(ev.title)}</div>
+            <div class="item-meta">${escapeHtml(ev.category)} · ${escapeHtml(ev.location)} · ${escapeHtml(String(ev.year))} · ${(ev.episodes || []).length} film(s)</div>
+            <div class="item-pin">${ev.pin ? `PIN: ${escapeHtml(ev.pin)}` : "Public"}</div>
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="startEdit(${Number(ev.id)})">Edit</button>
+            <button class="btn danger" onclick="deleteEvent(${Number(ev.id)})">Delete</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function setTab(tab) {
+      activeTab = tab;
+      $("addTab").classList.toggle("on", tab === "add");
+      $("manageTab").classList.toggle("on", tab === "manage");
+      $("formView").classList.toggle("hide", tab !== "add");
+      $("manageView").classList.toggle("hide", tab !== "manage");
+      if (tab === "manage") renderList();
+    }
+
+    async function loadEvents() {
+      events = await api(API_EVENTS);
+      renderList();
+    }
+
+    function addEpisode() {
+      syncFormFromInputs();
+      form.episodes.push({ id: "e" + Date.now(), title: "", youtubeId: "", duration: "" });
+      renderForm();
+    }
+
+    function removeEpisode(index) {
+      syncFormFromInputs();
+      form.episodes = form.episodes.filter((_, i) => i !== index);
+      renderForm();
+    }
+
+    async function fetchYoutube(index) {
+      syncFormFromInputs();
+      const input = form.episodes[index]?.youtubeId;
+      if (!input?.trim()) {
+        showMessage("Add a YouTube link first.");
+        return;
+      }
+      try {
+        const data = await api(`${API_YOUTUBE}?url=${encodeURIComponent(input)}`);
+        form.episodes[index] = {
+          ...form.episodes[index],
+          youtubeId: data.youtubeId || form.episodes[index].youtubeId,
+          title: data.title || form.episodes[index].title,
+          duration: data.duration || form.episodes[index].duration
+        };
+        if (!form.thumb && data.thumbnail) form.thumb = data.thumbnail;
+        renderForm();
+        showMessage("YouTube details fetched.");
+      } catch (error) {
+        showMessage(error.message || "Could not fetch YouTube details.");
+      }
+    }
+
+    async function submitEvent() {
+      syncFormFromInputs();
+      if (!form.title.trim()) {
+        showMessage("Title required.");
+        return;
+      }
+      if (form.pin && !/^\d{6}$/.test(form.pin)) {
+        showMessage("PIN must be exactly 6 digits or leave empty.");
+        return;
+      }
+      const episodes = form.episodes.filter(ep => ep.youtubeId.trim());
+      if (!episodes.length) {
+        showMessage("Add at least one film with a YouTube link.");
+        return;
+      }
+      const payload = { ...form, episodes, id: editingId || Date.now() };
+      try {
+        if (editingId) {
+          const saved = await api(`${API_EVENTS}/${editingId}`, { method: "PUT", body: JSON.stringify(payload) });
+          events = events.map(ev => ev.id === saved.id ? saved : ev);
+          showMessage("Event updated.");
+        } else {
+          const saved = await api(API_EVENTS, { method: "POST", body: JSON.stringify(payload) });
+          events = [saved, ...events.filter(ev => ev.id !== saved.id)];
+          showMessage("Event added to HCM TV.");
+        }
+        editingId = null;
+        form = emptyForm();
+        renderForm();
+        renderList();
+      } catch (error) {
+        showMessage(error.message || "Could not save event.");
+      }
+    }
+
+    function startEdit(id) {
+      const ev = events.find(item => Number(item.id) === Number(id));
+      if (!ev) return;
+      editingId = ev.id;
+      form = { ...ev, episodes: (ev.episodes || []).map(ep => ({ ...ep })) };
+      setTab("add");
+      renderForm();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function cancelEdit() {
+      editingId = null;
+      form = emptyForm();
+      renderForm();
+    }
+
+    async function deleteEvent(id) {
+      const ev = events.find(item => Number(item.id) === Number(id));
+      if (!ev || !confirm(`Delete "${ev.title}" from database?`)) return;
+      try {
+        await api(`${API_EVENTS}/${id}`, { method: "DELETE" });
+        events = events.filter(item => Number(item.id) !== Number(id));
+        if (Number(editingId) === Number(id)) cancelEdit();
+        renderList();
+        showMessage("Event deleted from database.");
+      } catch (error) {
+        showMessage(error.message || "Could not delete event.");
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#96;");
+    }
+
+    $("loginBtn").addEventListener("click", async () => {
+      if ($("password").value !== ADMIN_PW) {
+        showMessage("Incorrect password.", $("loginMsg"));
+        return;
+      }
+      $("loginPanel").classList.add("hide");
+      $("adminPanel").classList.remove("hide");
+      await loadEvents();
+      renderForm();
+    });
+    $("password").addEventListener("keydown", event => {
+      if (event.key === "Enter") $("loginBtn").click();
+    });
+    $("logoutBtn").addEventListener("click", () => location.reload());
+    $("addTab").addEventListener("click", () => setTab("add"));
+    $("manageTab").addEventListener("click", () => setTab("manage"));
+    $("addEpisodeBtn").addEventListener("click", addEpisode);
+    $("submitBtn").addEventListener("click", submitEvent);
+    ["title", "thumb", "desc", "category", "year", "location", "pin", "featured"].forEach(id => {
+      $(id).addEventListener("input", syncFormFromInputs);
+      $(id).addEventListener("change", syncFormFromInputs);
+    });
+  </script>
+</body>
+</html>
